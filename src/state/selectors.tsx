@@ -4,9 +4,7 @@ import axios from 'axios';
 export const fetchSongs = selector({
     key: 'fetchSongs',
     get: async () => {
-
-        const response = await axios.get('https://v1.nocodeapi.com/adityanocodeapi/spotify/heKTbpHSvXUIIEZP/browse/new?country=india&perPage=15');
+        const response = await axios.get(`https://saavn.dev/api/songs/yDeAS8Eh/suggestions`);
         return response.data;
-
     },
 });
