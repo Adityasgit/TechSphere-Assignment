@@ -163,9 +163,9 @@ function App() {
         </div>
       }
       content2={
-        <div className="hidden h-full w-full md:flex flex-col justify-between">
+        <div className=" h-[50%] md:h-full w-full md:flex flex-col justify-between">
           <div className="p-4 mt-3 font-bold text-3xl">{currTab}</div>
-          <div className="relative">
+          <div className="relative text-center">
             <input
               type="text"
               className="p-3 rounded-lg bg-[#383737] w-[85%] pr-12 text-sm m-auto"
@@ -192,7 +192,7 @@ function App() {
                     style={
                       currId === track.id ? { backgroundColor: "#464444" } : {}
                     }
-                    className="p-2 rounded-md w-[90%] hover:bg-[#4e4c4c] justify-between cursor-pointer flex flex-row mt-4"
+                    className="p-2 rounded-md md:w-[90%] hover:bg-[#4e4c4c] justify-between cursor-pointer flex flex-row mt-4"
                   >
                     <div className="w-[15%]">
                       <img
@@ -228,8 +228,11 @@ function App() {
         </div>
       }
       content3={
-        <div className="h-full w-full flex items-center justify-center">
-          <div className="w-[60%] flex h-[80%] flex-col">
+        <div className=" h-[50%] md:h-full w-full flex-col md:flex-row flex items-center justify-center">
+          <div className="md:hidden m-3 p-3 text-left text-3xl font-extrabold">
+            For You
+          </div>
+          <div className="w-[90%] md:w-[60%] flex md:h-[80%] flex-col">
             <div className="h-[20%] p-2">
               <div className="text-3xl font-semibold" title={currentSong?.name}>
                 {currentSong
