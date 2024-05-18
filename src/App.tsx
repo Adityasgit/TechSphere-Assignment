@@ -8,7 +8,35 @@ import logo from '../src/assets/img.png';
 import avatar from './assets/OIP (1).jpeg';
 import SearchIcon from '@mui/icons-material/Search';
 import AudioControls from './components/AudioController';
+import { ColorExtractor } from 'react-color-extractor';
+function darkenHexColor(hex, factor) {
+  // Ensure hex color is in the format #RRGGBB
+  if (hex.startsWith('#')) {
+    hex = hex.slice(1);
+  }
 
+  if (hex.length === 3) {
+    hex = hex.split('').map(char => char + char).join('');
+  }
+
+  // Convert hex color to RGB
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+
+  // Apply darkness factor
+  const newR = Math.max(0, Math.min(255, Math.floor(r * (1 - factor))));
+  const newG = Math.max(0, Math.min(255, Math.floor(g * (1 - factor))));
+  const newB = Math.max(0, Math.min(255, Math.floor(b * (1 - factor))));
+
+  // Convert RGB back to hex
+  const newHex = '#' +
+    newR.toString(16).padStart(2, '0') +
+    newG.toString(16).padStart(2, '0') +
+    newB.toString(16).padStart(2, '0');
+
+  return newHex;
+}
 const tabsData = [
   "For You",
   "Top Tracks",
@@ -29,6 +57,7 @@ function App() {
   const [currentSong, setCurrentSong] = useRecoilState(currentSongState);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
+  const [bgGradient, setBgGradient] = useState('linear-gradient(to bottom left, #000000, #3A0202)'); // State for background gradient
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -39,47 +68,48 @@ function App() {
     setIsPlaying(!isPlaying);
   };
 
-
   const handleNext = () => {
-    // Logic for playing the next track
-    // For example, if you have an array of tracks, you can find the index of the current song
-    // and then play the next song in the array
     const currentIndex = tracksLoadable.contents.data.findIndex(track => track.id === currentSong.id);
     if (currentIndex !== -1 && currentIndex < tracksLoadable.contents.data.length - 1) {
       const nextTrack = tracksLoadable.contents.data[currentIndex + 1];
       setCurrentSong(nextTrack);
       setCurrId(nextTrack.id);
-      setIsPlaying(true); // Assuming you want to start playing the next track automatically
+      setIsPlaying(true);
     }
   };
 
   const handlePrevious = () => {
-    // Logic for playing the previous track
-    // Similar to handleNext, but finding the index of the current song and then playing the previous song
     const currentIndex = tracksLoadable.contents.data.findIndex(track => track.id === currentSong.id);
     if (currentIndex > 0) {
       const previousTrack = tracksLoadable.contents.data[currentIndex - 1];
       setCurrentSong(previousTrack);
       setCurrId(previousTrack.id);
-      setIsPlaying(true); // Assuming you want to start playing the previous track automatically
+      setIsPlaying(true);
     }
   };
 
   const handleVolumeChange = (newVolume) => {
-    // Logic for changing the volume
-    // You can set the volume property of the audio element using the new volume value
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
   };
 
+  const getColors = (colors) => {
+    if (colors && colors.length > 0) {
+      const dominantColor = colors[0];
+      const gradient = `linear-gradient(to bottom left, ${darkenHexColor(dominantColor, 0.7)}, #000000)`;
+      setBgGradient(gradient);
+    }
+  };
+
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.currentTime = 0; // Reset audio playback to the beginning
-      audioRef.current.play(); // Start playing the new song automatically
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
       setIsPlaying(true);
     }
   }, [currentSong, audioRef]);
+
   useEffect(() => {
     if (isPlaying) {
       audioRef.current.play();
@@ -91,7 +121,7 @@ function App() {
   }, [isPlaying, audioRef]);
 
   return (
-    <Blueprint style="bg-gradient-to-l from-black to-[#3A0202]"
+    <Blueprint color={{ backgroundImage: bgGradient }} style="bg-gradient-to-l from-black to-[#3A0202]" // Set background gradient dynamically
       content1={
         <div className='hidden text-center h-full w-full md:flex flex-col justify-between'>
           <div><img className='p-3 invert-[100%]' src={logo} alt="Spotify LOGO" /></div>
@@ -134,7 +164,9 @@ function App() {
               <div className='text-gray-400 text-lg'>{currentSong?.artists?.all[0] ? currentSong.artists.all[0].name : ""}</div>
             </div>
             <div className='h-full w-full overflow-hidden'>
-              <img className='object-contain w-full h-full rounded-md' src={currentSong?.image[2].url} alt="" />
+              <ColorExtractor getColors={getColors}>
+                <img className='object-contain w-full h-full rounded-md' src={currentSong?.image[2].url} alt="" />
+              </ColorExtractor>
             </div>
             <div className='p-1'><audio ref={audioRef} src={currentSong?.downloadUrl[2].url}></audio>
               <AudioControls
@@ -146,7 +178,6 @@ function App() {
                 audioRef={audioRef}
                 currentSong={currentSong}
               /></div>
-
           </div>
         </div>
       }

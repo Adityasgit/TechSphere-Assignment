@@ -46,7 +46,7 @@ const AudioControls = ({ currentSong, isPlaying, onPlayPause, onNext, onPrevious
     };
 
     return (
-        <div className="flex flex-col items-center w-full max-w-md mx-auto p-4 bg-black rounded-lg shadow-lg">
+        <div className="flex flex-col items-center w-full max-w-md mx-auto p-4 bg-transparent rounded-lg ">
             <div className="relative w-full h-1 bg-gray-600 rounded-full cursor-pointer" onClick={handleProgressClick}>
                 <div className="absolute top-0 left-0 h-1 bg-white rounded-full" style={{ width: `${progress}%` }}></div>
             </div>
