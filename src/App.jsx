@@ -230,7 +230,7 @@ function App() {
       content3={
         <div className=" h-[50%] md:h-full w-full flex-col md:flex-row flex items-center justify-center">
           <div className="md:hidden m-3 p-3 text-left text-3xl font-extrabold">
-            For You
+            Spotify
           </div>
           <div className="w-[90%] md:w-[60%] flex md:h-[80%] flex-col">
             <div className="h-[20%] p-2">
