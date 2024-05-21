@@ -138,40 +138,41 @@ const AudioControls = ({ audioRef }) => {
   const isFavorite =
     favourites.length > 0 &&
     favourites.some((song) => song?.id === currentSong?.id);
-
-  return (
-    <div className="flex flex-col items-center w-full max-w-md mx-auto p-4 bg-transparent rounded-lg ">
-      <div
-        className="relative w-full h-1 bg-gray-600 rounded-full cursor-pointer"
-        onClick={handleProgressClick}
-      >
+  if (currentSong)
+    return (
+      <div className="flex flex-col items-center w-full max-w-md mx-auto p-4 bg-transparent rounded-lg ">
         <div
-          className="absolute top-0 left-0 h-1 bg-white rounded-full"
-          style={{ width: `${progress}%` }}
-        ></div>
+          className="relative w-full h-1 bg-gray-600 rounded-full cursor-pointer"
+          onClick={handleProgressClick}
+        >
+          <div
+            className="absolute top-0 left-0 h-1 bg-white rounded-full"
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
+        <div className="flex items-center justify-between w-full mt-4">
+          <button className="text-xl text-white" onClick={handleDownload}>
+            <FaEllipsisH />
+          </button>
+          <button onClick={onPrevious} className="text-2xl text-white">
+            <FaBackward />
+          </button>
+          <button onClick={onPlayPause} className="text-4xl text-white mx-4">
+            {isPlaying ? <FaPause /> : <FaPlay />}
+          </button>
+          <button onClick={onNext} className="text-2xl text-white">
+            <FaForward />
+          </button>
+          <button onClick={handleVolumeToggle} className="text-2xl text-white">
+            {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
+          </button>
+          <button onClick={handleFav} className="text-2xl text-white">
+            <FaHeart className={isFavorite ? "text-red-600" : "text-white"} />
+          </button>
+        </div>
       </div>
-      <div className="flex items-center justify-between w-full mt-4">
-        <button className="text-xl text-white" onClick={handleDownload}>
-          <FaEllipsisH />
-        </button>
-        <button onClick={onPrevious} className="text-2xl text-white">
-          <FaBackward />
-        </button>
-        <button onClick={onPlayPause} className="text-4xl text-white mx-4">
-          {isPlaying ? <FaPause /> : <FaPlay />}
-        </button>
-        <button onClick={onNext} className="text-2xl text-white">
-          <FaForward />
-        </button>
-        <button onClick={handleVolumeToggle} className="text-2xl text-white">
-          {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
-        </button>
-        <button onClick={handleFav} className="text-2xl text-white">
-          <FaHeart className={isFavorite ? "text-red-600" : "text-white"} />
-        </button>
-      </div>
-    </div>
-  );
+    );
+  return null;
 };
 
 export default AudioControls;
