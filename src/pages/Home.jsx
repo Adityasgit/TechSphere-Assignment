@@ -164,6 +164,8 @@ function Home() {
             {tracksLoadable.state === "loading" ? (
               <div className="w-[100%] h-full text-center p-6">Loading...</div>
             ) : tracksLoadable.state === "hasValue" ? (
+              currentList &&
+              currentList[0] &&
               currentList?.map((track, i) => (
                 <div
                   key={i}
