@@ -7,22 +7,27 @@ import {
   FaVolumeUp,
   FaVolumeMute,
   FaEllipsisH,
+  FaHeart,
 } from "react-icons/fa";
 import { useRecoilState } from "recoil";
 import {
   currentSongListState,
   currentSongState,
   currIdState,
+  favouritesState,
   playingState,
+  progressState,
 } from "../state/atoms";
 
 const AudioControls = ({ audioRef }) => {
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useRecoilState(progressState);
+  const [favourites, setFavourites] = useRecoilState(favouritesState);
   const [isMuted, setIsMuted] = useState(false);
   const [currentSong, setCurrentSong] = useRecoilState(currentSongState);
   const [isPlaying, setIsPlaying] = useRecoilState(playingState);
   const [currentList, setCurrentList] = useRecoilState(currentSongListState);
   const [currId, setCurrId] = useRecoilState(currIdState);
+
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
@@ -40,11 +45,13 @@ const AudioControls = ({ audioRef }) => {
       }
     }
   }, [isPlaying, audioRef]);
+
   const onVolumeChange = (newVolume) => {
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
   };
+
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
@@ -84,6 +91,7 @@ const AudioControls = ({ audioRef }) => {
     const progress = (currentTime / duration) * 100;
     setProgress(progress);
   };
+
   const onPrevious = () => {
     const currentIndex = currentList.findIndex(
       (track) => track.id === currentSong?.id
@@ -95,6 +103,7 @@ const AudioControls = ({ audioRef }) => {
       setIsPlaying(true);
     }
   };
+
   const handleProgressClick = (e) => {
     const progressBar = e.currentTarget;
     const clickPosition = e.nativeEvent.offsetX;
@@ -117,6 +126,18 @@ const AudioControls = ({ audioRef }) => {
     anchor.download = `${currentSong.name}.mp3`; // Set the filename for the downloaded file
     anchor.click();
   };
+
+  const handleFav = () => {
+    if (favourites.some((song) => song.id === currentSong.id)) {
+      setFavourites(favourites.filter((song) => song?.id !== currentSong.id));
+    } else {
+      setFavourites([...favourites, currentSong]);
+    }
+  };
+
+  const isFavorite =
+    favourites.length > 0 &&
+    favourites.some((song) => song?.id === currentSong?.id);
 
   return (
     <div className="flex flex-col items-center w-full max-w-md mx-auto p-4 bg-transparent rounded-lg ">
@@ -144,6 +165,9 @@ const AudioControls = ({ audioRef }) => {
         </button>
         <button onClick={handleVolumeToggle} className="text-2xl text-white">
           {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
+        </button>
+        <button onClick={handleFav} className="text-2xl text-white">
+          <FaHeart className={isFavorite ? "text-red-600" : "text-white"} />
         </button>
       </div>
     </div>

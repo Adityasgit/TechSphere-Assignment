@@ -24,3 +24,11 @@ export const currIdState = atom({
   key: "currIdState",
   default: null,
 });
+export const progressState = atom({
+  key: "progressState",
+  default: 0,
+});
+export const favouritesState = atom({
+  key: "favouritesState",
+  default: [],
+});

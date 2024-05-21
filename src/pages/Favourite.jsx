@@ -5,6 +5,7 @@ import {
   currentSongListState,
   currentSongState,
   currIdState,
+  favouritesState,
 } from "../state/atoms";
 import Blueprint from "../components/utils/Blueprint";
 import logo from "../assets/img.png";
@@ -30,6 +31,7 @@ function Favourite() {
   const [bgGradient, setBgGradient] = useRecoilState(bgColorState); // State for background gradient
   const [currId, setCurrId] = useRecoilState(currIdState); // State for current song id
   const [currentList, setCurrentList] = useRecoilState(currentSongListState); // State for current song list
+  const [favorites, setFavorites] = useRecoilState(favouritesState);
   useEffect(() => {
     setCurrentList("");
   }, []);
@@ -160,7 +162,47 @@ function Favourite() {
               )}
             </div>
           </div>
-          <div className="mt-4 w-full h-full flex overflow-scroll flex-col "></div>
+          <div className="mt-4 w-full h-full flex overflow-scroll flex-col ">
+            {" "}
+            {favorites?.map((track, i) => (
+              <div
+                key={i}
+                onClick={() => {
+                  setCurrId(track.id);
+                  setCurrentSong(track);
+                }}
+                style={
+                  currId === track.id ? { backgroundColor: "#464444" } : {}
+                }
+                className="p-2 rounded-md md:w-[90%] hover:bg-[#4e4c4c] justify-between cursor-pointer flex flex-row mt-4"
+              >
+                <div className="w-[15%]">
+                  <img
+                    id="songImage"
+                    className="rounded-[50%]"
+                    src={track.image[2].url}
+                    alt=""
+                  />
+                </div>
+                <div className="w-[75%] ml-2">
+                  <div>
+                    {" "}
+                    {track?.name.length > 20
+                      ? `${track?.name.slice(0, 20)}...`
+                      : track.name}
+                  </div>
+                  <div className="text-sm text-gray-300">
+                    {track?.artists.all[0].name.length > 20
+                      ? `${track.artists.all[0].name.slice(0, 20)}...`
+                      : track.artists.all[0].name}
+                  </div>
+                </div>
+                <div className="w-[10%] text-gray-300">
+                  {convertSecondsToMinutes(track.duration)}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       }
       content3={
