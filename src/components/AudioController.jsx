@@ -8,19 +8,43 @@ import {
   FaVolumeMute,
   FaEllipsisH,
 } from "react-icons/fa";
+import { useRecoilState } from "recoil";
+import {
+  currentSongListState,
+  currentSongState,
+  currIdState,
+  playingState,
+} from "../state/atoms";
 
-const AudioControls = ({
-  currentSong,
-  isPlaying,
-  onPlayPause,
-  onNext,
-  onPrevious,
-  onVolumeChange,
-  audioRef,
-}) => {
+const AudioControls = ({ audioRef }) => {
   const [progress, setProgress] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [currentSong, setCurrentSong] = useRecoilState(currentSongState);
+  const [isPlaying, setIsPlaying] = useRecoilState(playingState);
+  const [currentList, setCurrentList] = useRecoilState(currentSongListState);
+  const [currId, setCurrId] = useRecoilState(currIdState);
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  }, [currentSong, audioRef]);
 
+  useEffect(() => {
+    if (audioRef.current !== null && typeof audioRef.current !== "undefined") {
+      if (isPlaying) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isPlaying, audioRef]);
+  const onVolumeChange = (newVolume) => {
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
+  };
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
@@ -31,13 +55,46 @@ const AudioControls = ({
     setProgress(0); // Reset progress when currentSong changes
   }, [currentSong]);
 
+  const onPlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const onNext = () => {
+    const currentIndex = currentList.findIndex(
+      (track) => track.id === currentSong?.id
+    );
+    if (currentIndex !== -1 && currentIndex < currentList.length - 1) {
+      const nextTrack = currentList[currentIndex + 1];
+      setCurrentSong(nextTrack);
+      setCurrId(nextTrack.id);
+      setIsPlaying(true);
+    }
+  };
+
   const handleTimeUpdate = () => {
     const currentTime = audioRef.current.currentTime;
     const duration = audioRef.current.duration;
     const progress = (currentTime / duration) * 100;
     setProgress(progress);
   };
-
+  const onPrevious = () => {
+    const currentIndex = currentList.findIndex(
+      (track) => track.id === currentSong?.id
+    );
+    if (currentIndex > 0) {
+      const previousTrack = currentList[currentIndex - 1];
+      setCurrentSong(previousTrack);
+      setCurrId(previousTrack.id);
+      setIsPlaying(true);
+    }
+  };
   const handleProgressClick = (e) => {
     const progressBar = e.currentTarget;
     const clickPosition = e.nativeEvent.offsetX;
