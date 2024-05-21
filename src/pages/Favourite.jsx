@@ -46,15 +46,16 @@ function Favourite() {
     }
   };
   const [query, setQuery] = useState("");
+  const [filtered, setfiltered] = useState([]); // State for filtered songs
   useEffect(() => {
     handleFilterSongs();
   }, [query]);
   const handleFilterSongs = () => {
     const searchValue = query.toLowerCase();
-    const filteredSongs = tracksLoadable?.contents?.data?.filter((song) =>
+    const filteredSongs = favorites?.filter((song) =>
       song.name.toLowerCase().includes(searchValue)
     );
-    setCurrentList(filteredSongs);
+    setfiltered(filteredSongs);
   };
 
   return (
@@ -164,7 +165,7 @@ function Favourite() {
           </div>
           <div className="mt-4 w-full h-full flex overflow-scroll flex-col ">
             {" "}
-            {favorites?.map((track, i) => (
+            {filtered?.map((track, i) => (
               <div
                 key={i}
                 onClick={() => {
